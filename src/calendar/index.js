@@ -77,8 +77,12 @@ class Calendar extends Component {
     onPressArrowLeft: PropTypes.func,
     // Handler which gets executed when press arrow icon left. It receive a callback can go next month
     onPressArrowRight: PropTypes.func
+    // Collapsable enable collapseable
+    collapsable: PropTypes.bool
   };
-
+  static defaultProps = {
+    collapsable: false,
+  };
   constructor(props) {
     super(props);
     this.style = styleConstructor(this.props.theme);
@@ -269,9 +273,18 @@ class Calendar extends Component {
           onPressArrowLeft={this.props.onPressArrowLeft}
           onPressArrowRight={this.props.onPressArrowRight}
         />
-        <Collapsible collapsed={this.props.collapsed}>
-          <View style={this.style.monthView}>{weeks}</View>
-        </Collapsible>
+        {
+          this.props.collapsable && (
+            <Collapsible collapsed={this.props.collapsed} collapsedHeight={46}>
+              <View style={this.style.monthView}>{weeks}</View>
+            </Collapsible>
+          )
+        }
+        {
+          !this.props.collapsable && (
+            <View style={this.style.monthView}>{weeks}</View>
+          )
+        }
       </View>);
   }
 }
