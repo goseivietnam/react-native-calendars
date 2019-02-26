@@ -78,7 +78,9 @@ class Calendar extends Component {
     // Handler which gets executed when press arrow icon left. It receive a callback can go next month
     onPressArrowRight: PropTypes.func,
     // Collapsable enable collapseable
-    collapsable: PropTypes.bool
+    collapsable: PropTypes.bool,
+    // DayFocus
+    dayFocus: PropTypes.string
   };
   static defaultProps = {
     collapsable: false,
@@ -245,8 +247,18 @@ class Calendar extends Component {
   render() {
     const days = dateutils.page(this.state.currentMonth, this.props.firstDay);
     const weeks = [];
+    let weekFocusNr = 0;
+    let dateFocus = null
+    if (this.props.dayFocus) {
+      dateFocus = parseDate(this.props.dayFocus);
+    }
+    let weekFocus = null;
     while (days.length) {
-      weeks.push(this.renderWeek(days.splice(0, 7), weeks.length));
+      let dayInWeek = days.splice(0, 7);
+      if (!weekFocus && ((!dateFocus && !weeks.length) || (dateFocus && dateutils.isLTE(dateFocus, dayInWeek[6])))) {
+        weekFocus = dayInWeek;
+      }
+      weeks.push(this.renderWeek(dayInWeek, weeks.length));
     }
     let indicator;
     const current = parseDate(this.props.current);
@@ -274,8 +286,13 @@ class Calendar extends Component {
           onPressArrowRight={this.props.onPressArrowRight}
         />
         {
+          this.props.collapsable && this.props.collapsed && (
+            <View style={this.style.monthView}>{this.renderWeek(weekFocus, 10)}</View>
+          )
+        }
+        {
           this.props.collapsable && (
-            <Collapsible collapsed={this.props.collapsed} collapsedHeight={46}>
+            <Collapsible collapsed={this.props.collapsed}>
               <View style={this.style.monthView}>{weeks}</View>
             </Collapsible>
           )
