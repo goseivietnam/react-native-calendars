@@ -251,6 +251,9 @@ class Calendar extends Component {
     let dateFocus = null
     if (this.props.dayFocus) {
       dateFocus = parseDate(this.props.dayFocus);
+      if (dateFocus.getMonth() != this.state.currentMonth.getMonth()){
+        dateFocus = null;
+      }
     }
     let weekFocus = null;
     while (days.length) {
